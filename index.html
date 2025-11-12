@@ -1,152 +1,326 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hệ thống Kiểm tra Online</title>
+<title>Hệ thống kiểm tra Online</title>
 <style>
-  :root{
-    --bg:#0d6efd; --txt:#111; --muted:#6b7280; --ok:#16a34a; --err:#dc2626; --card:#fff;
-    --bd:#e5e7eb;
-  }
-  *{box-sizing:border-box}
-  body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f6f8fb;color:var(--txt)}
-  header{background:var(--bg);color:#fff;padding:20px 16px}
-  header h1{margin:0;font-size:22px;font-weight:800}
-  .wrap{max-width:980px;margin:18px auto;padding:0 16px}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:720px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--card);border:1px solid var(--bd);border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
-  .card h2{margin:0 0 12px;font-size:18px}
-  .pad{padding:20px}
-  label{display:block;font-weight:600;margin:8px 0 6px}
-  input,select,textarea{
-    width:100%;padding:12px 14px;border:1px solid var(--bd);border-radius:12px;background:#fff;
-    font:inherit;outline:0;
-  }
-  input:focus,select:focus,textarea:focus{border-color:#9ac3ff;box-shadow:0 0 0 3px #cfe3ff}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-  .btn{
-    padding:11px 16px;border-radius:12px;border:1px solid transparent;background:var(--bg);color:#fff;
-    cursor:pointer;font-weight:700
-  }
-  .btn.ghost{background:#fff;color:#111;border-color:var(--bd)}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
-  .muted{color:var(--muted);font-size:13px;margin-top:4px}
-  .pill{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;margin-top:8px}
-  .ok{background:#ecfdf5;color:var(--ok);border:1px solid #bbf7d0}
-  .err{background:#fef2f2;color:var(--err);border:1px solid #fecaca}
-  footer{padding:18px 16px;color:var(--muted);text-align:center}
+:root{--bg:#0d6efd;--fg:#111;--muted:#6b7280;--bd:#e5e7eb;--ok:#059669;--err:#dc2626}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 system-ui,Segoe UI,Roboto,Arial;background:#f6f8fb;color:var(--fg)}
+header{background:var(--bg);color:#fff;padding:18px}
+h1{margin:0;font-size:22px}
+.wrap{max-width:1100px;margin:18px auto;padding:0 16px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+nav button{border:1px solid var(--bd);background:#fff;color:#111;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}
+nav button.active{background:var(--bg);color:#fff;border-color:transparent}
+.card{background:#fff;border:1px solid var(--bd);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.06);padding:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+label{font-weight:700}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--bd);border-radius:10px;font:inherit}
+input:focus,select:focus,textarea:focus{outline:0;border-color:#9ac3ff;box-shadow:0 0 0 3px #cfe3ff}
+.btn{background:var(--bg);color:#fff;border:0;padding:11px 16px;border-radius:10px;cursor:pointer;font-weight:800}
+.btn.ghost{background:#fff;color:#111;border:1px solid var(--bd)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+small.muted{color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid var(--bd);margin-top:8px}
+.ok{background:#ecfdf5;border-color:#bbf7d0;color:#065f46}
+.err{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px 10px;border-bottom:1px solid var(--bd);text-align:left}
+.timer{font-weight:900;color:#b91c1c}
+.q{margin:14px 0;padding:14px;border:1px dashed var(--bd);border-radius:10px}
+.q h4{margin:0 0 8px}
+.option{display:flex;gap:8px;align-items:flex-start;margin:4px 0}
+#reviewBox pre{white-space:pre-wrap}
+footer{padding:18px;text-align:center;color:var(--muted)}
 </style>
 </head>
 <body>
-<header><h1>Hệ thống Kiểm tra Online</h1></header>
-<div class="wrap grid">
-  <section class="card pad">
-    <h2>Đăng ký tài khoản</h2>
-    <label>Họ và tên</label>
-    <input id="r_fullname" placeholder="Ví dụ: Nguyễn Văn A">
-    <label>Ngày sinh</label>
-    <input id="r_birth" placeholder="YYYY-MM-DD">
-    <label>Giới tính</label>
-    <input id="r_gender" placeholder="Nam/Nữ">
-    <label>Dân tộc</label>
-    <input id="r_ethnicity" placeholder="Kinh, Hoa, ...">
-    <label>Trường</label>
-    <input id="r_school" placeholder="VD: THPT Nguyễn Đình Chiểu">
-    <label>Khối</label>
-    <input id="r_grade" placeholder="10, 11, 12">
-    <label>Mã lớp</label>
-    <input id="r_class" placeholder="VD: 12A1">
-    <label>Số CCCD</label>
-    <input id="r_cccd" placeholder="12 số">
-    <label>Email</label>
-    <input id="r_email" placeholder="name@email.com">
-    <label>Ghi chú</label>
-    <textarea id="r_note" rows="2" placeholder="Tùy chọn"></textarea>
-    <div class="btns">
+<header><h1>Hệ thống kiểm tra Online</h1></header>
+<div class="wrap">
+
+  <nav>
+    <button id="tabReg"   class="active">Đăng ký</button>
+    <button id="tabLogin">Đăng nhập</button>
+    <button id="tabExam">Vào thi</button>
+    <button id="tabReview">Xem lại</button>
+    <button id="btnPing" class="ghost">Kiểm tra kết nối</button>
+  </nav>
+
+  <!-- ĐĂNG KÝ -->
+  <section id="viewReg" class="card">
+    <div class="grid2">
+      <div>
+        <label>Họ và tên</label>
+        <input id="r_fullname" placeholder="Ví dụ: Nguyễn Văn A">
+      </div>
+      <div>
+        <label>Ngày sinh</label>
+        <input id="r_birth" placeholder="YYYY-MM-DD">
+      </div>
+      <div>
+        <label>Giới tính</label>
+        <input id="r_gender" placeholder="Nam/Nữ">
+      </div>
+      <div>
+        <label>Dân tộc</label>
+        <input id="r_ethnicity" placeholder="Kinh, Hoa, ...">
+      </div>
+      <div>
+        <label>Trường</label>
+        <input id="r_school" placeholder="VD: THPT Nguyễn Đình Chiểu">
+      </div>
+      <div>
+        <label>Khối</label>
+        <input id="r_grade" placeholder="10, 11, 12">
+      </div>
+      <div>
+        <label>Mã lớp</label>
+        <input id="r_class" placeholder="VD: 12A1">
+      </div>
+      <div>
+        <label>Số CCCD</label>
+        <input id="r_cccd" placeholder="12 số">
+      </div>
+      <div>
+        <label>Email</label>
+        <input id="r_email" placeholder="name@email.com">
+      </div>
+      <div>
+        <label>Ghi chú</label>
+        <input id="r_note" placeholder="(tùy chọn)">
+      </div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:10px">
       <button class="btn" id="btnRegister">Gửi đăng ký</button>
-      <button class="btn ghost" id="btnPing">Kiểm tra kết nối</button>
+      <small class="muted">Hệ thống tự **IN HOA** họ tên.</small>
     </div>
     <div id="msgReg" class="pill" style="display:none"></div>
   </section>
-  <aside class="card pad">
-    <h2>Trạng thái hệ thống</h2>
-    <div id="statusBox" class="pill" style="display:none"></div>
-  </aside>
+
+  <!-- ĐĂNG NHẬP -->
+  <section id="viewLogin" class="card" style="display:none">
+    <div class="grid2">
+      <div>
+        <label>CCCD / Mã định danh</label>
+        <input id="l_cccd" placeholder="12 số">
+      </div>
+      <div>
+        <label>Password</label>
+        <input id="l_password" type="password" placeholder="Mật khẩu đã gửi email">
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn" id="btnLogin">Đăng nhập</button>
+    </div>
+    <div id="msgLogin" class="pill" style="display:none"></div>
+  </section>
+
+  <!-- VÀO THI -->
+  <section id="viewExam" class="card" style="display:none">
+    <div class="grid2">
+      <div>
+        <label>Chọn bài kiểm tra</label>
+        <select id="examSelect"></select>
+      </div>
+      <div>
+        <label>Thông tin</label>
+        <div id="examInfo"><small class="muted">Chọn bài để xem: môn, khối, thời gian...</small></div>
+      </div>
+    </div>
+    <div style="margin-top:10px">
+      <button class="btn" id="btnLoadQ">Tải câu hỏi</button>
+      <button class="btn ghost" id="btnStart" disabled>Bắt đầu</button>
+      <span id="timer" class="timer" style="margin-left:12px"></span>
+    </div>
+    <div id="quizBox" style="margin-top:14px"></div>
+    <div style="margin-top:12px">
+      <button class="btn" id="btnSubmit" disabled>Nộp bài</button>
+    </div>
+    <div id="msgExam" class="pill" style="display:none"></div>
+  </section>
+
+  <!-- XEM LẠI -->
+  <section id="viewReview" class="card" style="display:none">
+    <div id="reviewBox"><pre>Chưa có dữ liệu.</pre></div>
+  </section>
+
+  <section class="card" id="statusCard" style="margin-top:12px;display:none">
+    <div id="statusBox" class="pill"></div>
+  </section>
+
 </div>
 <footer>© THPT Nguyễn Đình Chiểu – Hệ thống kiểm tra Online</footer>
 
 <script>
-  const API_DEFAULT = 'https://solitary-leaf-24bd.nvtpvd.workers.dev';
-  const gid = id => document.getElementById(id);
-  const show = (el, yes=true) => (el.style.display = yes ? '' : 'none');
+const API_DEFAULT = 'https://solitary-leaf-24bd.nvtpvd.workers.dev';
 
-  function toast(el, text, type='ok'){
-    el.className = 'pill ' + (type==='ok'?'ok':'err');
-    el.textContent = text;
-    show(el,true);
-  }
+// helpers
+const gid = id => document.getElementById(id);
+const show = (el, yes=true) => el.style.display = yes ? '' : 'none';
+const toast = (el, text, type='ok') => { el.className = 'pill ' + (type==='ok'?'ok':'err'); el.textContent = text; show(el,true); };
+const normalizeFullName = s => String(s||'').normalize('NFC').trim().replace(/\s+/g,' ').toUpperCase();
 
-  function normalizeFullName(s){
-    return String(s||'').normalize('NFC').trim().replace(/\s+/g,' ').toUpperCase();
-  }
+function switchTab(which){
+  ['Reg','Login','Exam','Review'].forEach(x=>{
+    gid('view'+x).style.display = (x===which)?'':'none';
+    gid('tab'+x).classList.toggle('active', x===which);
+  });
+}
+gid('tabReg').onclick   = ()=>switchTab('Reg');
+gid('tabLogin').onclick = ()=>switchTab('Login');
+gid('tabExam').onclick  = ()=>switchTab('Exam');
+gid('tabReview').onclick= ()=>switchTab('Review');
 
-  async function api(action, body={}){
-    try{
-      const r = await fetch(API_DEFAULT, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({action, ...body})
+async function api(action, body={}){
+  try{
+    const r = await fetch(API_DEFAULT, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,...body})});
+    return await r.json();
+  }catch(e){ return {ok:false, reason:'Không kết nối được máy chủ'}; }
+}
+
+// Đăng ký
+gid('btnRegister').onclick = async ()=>{
+  const btn = gid('btnRegister'); btn.disabled = true;
+  const msg = gid('msgReg');
+  const payload = {
+    fullname: normalizeFullName(gid('r_fullname').value),
+    birth: gid('r_birth').value.trim(),
+    gender: gid('r_gender').value.trim(),
+    ethnicity: gid('r_ethnicity').value.trim(),
+    school: gid('r_school').value.trim(),
+    grade: gid('r_grade').value.trim(),
+    classCode: gid('r_class').value.trim(),
+    cccd: gid('r_cccd').value.trim(),
+    email: gid('r_email').value.trim(),
+    note: gid('r_note').value.trim()
+  };
+  toast(msg,'Đang gửi đăng ký ...','ok');
+  const res = await api('register',{payload});
+  btn.disabled = false;
+  if(res.ok) toast(msg,'Đăng ký thành công ✔ Mật khẩu đã gửi email.','ok');
+  else toast(msg,'Lỗi: '+(res.reason||'Không xác định'),'err');
+};
+
+// Đăng nhập
+let token=null, me=null;
+gid('btnLogin').onclick = async ()=>{
+  const btn = gid('btnLogin'); btn.disabled = true;
+  const msg = gid('msgLogin');
+  const cccd = gid('l_cccd').value.trim(); const password = gid('l_password').value.trim();
+  toast(msg,'Đang đăng nhập ...','ok');
+  const res = await api('login',{cccd,password});
+  btn.disabled = false;
+  if(res.ok){ token=res.token; me=res.me; toast(msg,'Đăng nhập thành công','ok'); switchTab('Exam'); loadExams(); }
+  else toast(msg,'Sai CCCD hoặc mật khẩu','err');
+};
+
+// Tải danh sách bài thi
+async function loadExams(){
+  const res = await api('getExams',{});
+  const sel = gid('examSelect'); sel.innerHTML='';
+  if(!res.ok || !res.exams?.length){ sel.innerHTML = '<option>Chưa có bài thi</option>'; return; }
+  res.exams.forEach(ex=>{
+    const o = document.createElement('option');
+    o.value = ex.ExamId; o.textContent = ex.Title + ' — ' + ex.Subject + ' (khối ' + ex.Grade + ')';
+    o.dataset.info = JSON.stringify(ex);
+    sel.appendChild(o);
+  });
+  sel.onchange = ()=>{
+    const ex = JSON.parse(sel.selectedOptions[0].dataset.info);
+    gid('examInfo').innerHTML = '<b>Môn:</b> '+ex.Subject+' | <b>Khối:</b> '+ex.Grade+' | <b>Số câu:</b> '+ex.QuestionCount+' | <b>Thời gian:</b> '+ex.DurationMin+' phút';
+  };
+  sel.onchange();
+}
+
+// Tải câu hỏi
+let questions=[], examMeta=null, started=false, deadline=0, timerId=null, answers={};
+gid('btnLoadQ').onclick = async ()=>{
+  const examId = gid('examSelect').value;
+  const res = await api('getQuestions',{examId});
+  if(!res.ok){ toast(gid('msgExam'),'Không tải được câu hỏi','err'); return; }
+  questions = res.questions; examMeta=res.meta;
+  renderQuestions(false);
+  gid('btnStart').disabled = false; gid('btnSubmit').disabled = true;
+  toast(gid('msgExam'),'Đã tải '+questions.length+' câu hỏi. Bấm Bắt đầu để tính giờ.','ok');
+};
+
+function renderQuestions(lock){
+  const box = gid('quizBox'); box.innerHTML = '';
+  questions.forEach((q,idx)=>{
+    const div = document.createElement('div'); div.className='q';
+    div.innerHTML = '<h4>Câu '+(idx+1)+'. '+q.text+'</h4>';
+    if(q.type==='mcq'){
+      (q.options||[]).forEach((opt,i)=>{
+        const id='q_'+idx+'_'+i;
+        const checked = answers[idx]==i ? 'checked' : '';
+        const dis = lock?'disabled':'';
+        div.innerHTML += '<label class="option"><input '+dis+' '+checked+' type="radio" name="q'+idx+'" value="'+i+'"> <span>'+(opt)+'</span></label>';
       });
-      return await r.json();
-    }catch(e){
-      return {ok:false, reason:'Không kết nối được máy chủ'};
+    }else if(q.type==='boolean'){
+      ['Đúng','Sai'].forEach((t,i)=>{
+        const dis = lock?'disabled':'';
+        const checked = (answers[idx]===(i===0)) ? 'checked' : '';
+        div.innerHTML += '<label class="option"><input '+dis+' '+checked+' type="radio" name="q'+idx+'" value="'+(i===0)+'"> <span>'+t+'</span></label>';
+      });
     }
+    box.appendChild(div);
+  });
+  // lắng nghe
+  box.querySelectorAll('input[type=radio]').forEach(inp=>{
+    inp.addEventListener('change',()=>{
+      const [_,idx] = inp.name.match(/q(\d+)/); 
+      answers[Number(idx)] = (inp.value==='true')?true:(inp.value==='false')?false:Number(inp.value);
+    });
+  });
+}
+
+// Bắt đầu thi: đếm ngược
+gid('btnStart').onclick = ()=>{
+  if(!questions.length) return;
+  started=true; answers={}; deadline = Date.now() + examMeta.DurationMin*60*1000;
+  gid('btnStart').disabled = true; gid('btnSubmit').disabled = false;
+  tick();
+  timerId = setInterval(tick, 1000);
+  toast(gid('msgExam'),'Đang làm bài...','ok');
+};
+function tick(){
+  const left = Math.max(0, Math.floor((deadline-Date.now())/1000));
+  const m = Math.floor(left/60), s=left%60;
+  gid('timer').textContent = '⏳ '+m+'m '+String(s).padStart(2,'0')+'s';
+  if(left<=0){ clearInterval(timerId); submitExam(); }
+}
+
+// Nộp bài
+gid('btnSubmit').onclick = submitExam;
+async function submitExam(){
+  if(!started) return;
+  clearInterval(timerId);
+  const examId = gid('examSelect').value;
+  const payload = { token, examId, answers, durationUsedSec: Math.floor((examMeta.DurationMin*60*1000 - Math.max(0,deadline-Date.now()))/1000) };
+  const res = await api('submitExam', payload);
+  if(res.ok){
+    renderQuestions(true);
+    toast(gid('msgExam'),'Nộp bài thành công. Điểm: '+res.score+'/'+res.total+' ('+res.percent+'%)','ok');
+    gid('reviewBox').innerHTML = '<pre>'+JSON.stringify(res.detail,null,2)+'</pre>'; switchTab('Review');
+  }else{
+    toast(gid('msgExam'),'Nộp bài thất bại: '+(res.reason||'Không xác định'),'err');
   }
+}
 
-  async function onRegister(){
-    const btn = gid('btnRegister'); btn.disabled = true;
-    const msg = gid('msgReg');
-
-    const payload = {
-      fullname: normalizeFullName(gid('r_fullname').value),
-      birth: gid('r_birth').value.trim(),
-      gender: gid('r_gender').value.trim(),
-      ethnicity: gid('r_ethnicity').value.trim(),
-      school: gid('r_school').value.trim(),
-      grade: gid('r_grade').value.trim(),
-      classCode: gid('r_class').value.trim(),
-      cccd: gid('r_cccd').value.trim(),
-      email: gid('r_email').value.trim(),
-      note: gid('r_note').value.trim()
-    };
-
-    toast(msg,'Đang gửi đăng ký...','ok');
-    const res = await api('register',{payload});
-    btn.disabled = false;
-
-    if(res.ok) toast(msg,'Đăng ký thành công ✔','ok');
-    else toast(msg,'Lỗi: '+(res.reason||'Không xác định'),'err');
-  }
-
-  async function ping(){
-    const box = gid('statusBox');
-    show(box,false);
-    try{
-      const url = API_DEFAULT+'?action=pingSheet';
-      const r = await fetch(url);
-      const t = await r.text();
-      if(r.ok && /"ok"\s*:\s*true/.test(t)) toast(box,'Kết nối OK (Worker ↔ Apps Script)','ok');
-      else toast(box,'Worker hoạt động nhưng Apps Script lỗi','err');
-    }catch(e){
-      toast(box,'Không truy cập được Worker','err');
-    }
-  }
-
-  gid('btnRegister').onclick = onRegister;
-  gid('btnPing').onclick = ping;
+// Ping
+gid('btnPing').onclick = async ()=>{
+  const url = API_DEFAULT+'?action=pingSheet';
+  const statusCard = gid('statusCard'), box=gid('statusBox');
+  try{
+    const r = await fetch(url); const t = await r.text();
+    statusCard.style.display=''; 
+    if(r.ok && /"ok"\s*:\s*true/.test(t)) box.className='pill ok', box.textContent='Kết nối OK (Worker ↔ Apps Script)';
+    else box.className='pill err', box.textContent='Worker OK nhưng Apps Script chưa sẵn sàng';
+  }catch(_){ statusCard.style.display=''; box.className='pill err'; box.textContent='Không truy cập được Worker'; }
+};
 </script>
 </body>
 </html>
