@@ -1,204 +1,87 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hệ thống kiểm tra Online 2025</title>
-  <style>
-    :root{--c:#0d6efd}
-    *{box-sizing:border-box}
-    body{font-family:system-ui,Arial,sans-serif;background:#f7f7fb;margin:0;color:#1f2330}
-    header{background:#fff;border-bottom:1px solid #e6e6ef;padding:12px 16px;position:sticky;top:0;z-index:10}
-    header h1{font-size:18px;margin:0}
-    .wrap{max-width:980px;margin:18px auto;padding:0 16px}
-    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-    .row{display:flex;flex-direction:column;gap:6px}
-    input,select,textarea{padding:10px;border:1px solid #d5d8e1;border-radius:10px;background:#fff;font-size:15px}
-    .btn{padding:10px 14px;border:none;border-radius:10px;background:var(--c);color:#fff;font-weight:700;cursor:pointer}
-    nav{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
-    .card{background:#fff;border:1px solid #e6e6ef;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.04);padding:16px}
-    .muted{color:#667085} .ok{color:#0f7b0f} .err{color:#c62828}
-    footer{margin:24px 0;color:#667085;text-align:center}
-    pre#reviewBox{white-space:pre-wrap}
-    .pill{background:#eef3ff;color:#2255d7;padding:2px 8px;border-radius:999px;font-size:12px}
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ thống Kiểm tra Online 2025</title>
 </head>
 <body>
-  <header>
-    <div class="wrap" style="display:flex;gap:12px;align-items:center;justify-content:space-between">
-      <h1>Hệ thống kiểm tra Online 2025 <span class="pill">Bản cấu hình nhanh</span></h1>
-      <div style="display:flex;gap:8px">
-        <button class="btn" onclick="showSettings()">Cấu hình</button>
-      </div>
-    </div>
-  </header>
-
-  <div class="wrap">
-    <nav>
-      <button class="btn" onclick="showTab('reg')">Đăng ký</button>
-      <button class="btn" onclick="showTab('login')">Đăng nhập</button>
-      <button class="btn" onclick="showTab('exam')">Vào thi</button>
-      <button class="btn" onclick="showTab('review')">Xem lại</button>
-    </nav>
-
-    <!-- Đăng ký -->
-    <section id="tab-reg" class="card">
-      <h2>Đăng ký tài khoản</h2>
-      <div class="grid">
-        <div class="row"><label>Họ và tên</label><input id="r_fullname" placeholder="VD: Nguyễn Văn A" /></div>
-        <div class="row"><label>Ngày sinh</label><input id="r_birth" type="date" /></div>
-        <div class="row"><label>Giới tính</label>
-          <select id="r_gender"><option value="Nam">Nam</option><option value="Nữ">Nữ</option><option value="Khác">Khác</option></select>
-        </div>
-        <div class="row"><label>Dân tộc</label><input id="r_ethnicity" /></div>
-        <div class="row"><label>Trường</label><input id="r_school" /></div>
-        <div class="row"><label>Khối</label><select id="r_grade"><option>10</option><option>11</option><option>12</option></select></div>
-        <div class="row"><label>Mã lớp</label><input id="r_class" /></div>
-        <div class="row"><label>Số CCCD/mã định danh</label><input id="r_cccd" /></div>
-        <div class="row"><label>Email</label><input id="r_email" type="email" /></div>
-        <div class="row" style="grid-column:1/-1"><label>Ghi chú</label><textarea id="r_note" rows="2"></textarea></div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button id="btnRegister" class="btn" onclick="onRegister()">Gửi đăng ký</button>
-        <span id="msgReg" class="muted"></span>
-      </div>
-    </section>
-
-    <!-- Đăng nhập -->
-    <section id="tab-login" class="card" style="display:none">
-      <h2>Đăng nhập</h2>
-      <div class="grid">
-        <div class="row"><label>CCCD</label><input id="l_cccd" /></div>
-        <div class="row"><label>Mật khẩu</label><input id="l_password" type="password" /></div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn" onclick="onLogin()">Đăng nhập</button>
-        <span id="msgLogin" class="muted"></span>
-      </div>
-    </section>
-
-    <!-- Vào thi (tối giản) -->
-    <section id="tab-exam" class="card" style="display:none">
-      <h2>Vào thi</h2>
-      <div class="grid">
-        <div class="row"><label>Khối</label><select id="e_grade"><option>10</option><option>11</option><option>12</option></select></div>
-        <div class="row"><label>Môn</label><input id="e_subject" placeholder="VD: Toán 12" /></div>
-        <div class="row"><label>Hình thức</label>
-          <select id="e_mode"><option value="TX">Kiểm tra TX</option><option value="DK">Kiểm tra ĐK</option><option value="GK">Giữa kỳ</option><option value="CK">Cuối kỳ</option></select>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:10px">
-        <button class="btn" onclick="getExam()">Lấy đề thi</button>
-        <span id="msgExam" class="muted"></span>
-      </div>
-      <pre id="reviewBox" class="muted" style="margin-top:10px"></pre>
-    </section>
-
-    <!-- Xem lại -->
-    <section id="tab-review" class="card" style="display:none">
-      <h2>Kết quả</h2>
-      <button class="btn" onclick="exportCSV()">Tải điểm CSV (bài hiện tại)</button>
-      <pre id="csvInfo" class="muted"></pre>
-    </section>
-
-    <footer>© THPT Nguyễn Đình Chiểu – Hệ thống kiểm tra Online</footer>
-  </div>
+  <h1>Hệ thống Kiểm tra Online</h1>
+  <p>Nhập thông tin để đăng ký:</p>
+  <form id="regForm">
+    <label>Họ và tên:</label><input id="r_fullname"><br>
+    <label>Ngày sinh:</label><input id="r_birth"><br>
+    <label>Giới tính:</label><input id="r_gender"><br>
+    <label>Dân tộc:</label><input id="r_ethnicity"><br>
+    <label>Trường:</label><input id="r_school"><br>
+    <label>Khối:</label><input id="r_grade"><br>
+    <label>Mã lớp:</label><input id="r_class"><br>
+    <label>Số CCCD:</label><input id="r_cccd"><br>
+    <label>Email:</label><input id="r_email"><br>
+    <label>Ghi chú:</label><input id="r_note"><br>
+    <button type="button" id="btnRegister">Gửi đăng ký</button>
+    <p id="msgReg"></p>
+  </form>
 
 <script>
-const API_DEFAULT = 'https://YOUR_WORKER_URL.workers.dev';
-function getApiUrl(){
-  const fromQuery = new URLSearchParams(location.search).get('api');
-  if(fromQuery) localStorage.setItem('API_URL', fromQuery);
-  return localStorage.getItem('API_URL') || API_DEFAULT;
-}
-function setApiUrl(url){ localStorage.setItem('API_URL', url); }
-let API_URL = getApiUrl();
+const API_DEFAULT = 'https://solitary-leaf-24bd.nvtpvd.workers.dev'; // Worker cố định
 
 const gid = id => document.getElementById(id);
-function v(id){ return gid(id)?.value?.trim() || ''; }
-function s(id,val){ if(gid(id)) gid(id).value = val; if(gid(id) && gid(id).tagName==='DIV') gid(id).textContent = val; }
-function m(id, text, isErr=false, isOk=false){ const el=gid(id); if(!el) return; el.textContent=text; el.className=isErr?'err':(isOk?'ok':'muted'); }
+function valAny(...ids) {
+  for (const id of ids) {
+    const el = gid(id);
+    if (el && typeof el.value === 'string') return el.value.trim();
+  }
+  return '';
+}
+function msg(id, text, isErr=false, isOk=false){
+  const el = gid(id);
+  if (!el) return;
+  el.textContent = text;
+  el.style.color = isErr ? 'red' : (isOk ? 'green' : 'black');
+}
 
 function normalizeFullName(str){
   return String(str||'').normalize('NFC').trim().replace(/\s+/g,' ').toUpperCase();
 }
 
-async function api(action, body={}){
-  const ctrl=new AbortController(); const t=setTimeout(()=>ctrl.abort(),15000);
-  try{
-    const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,...body}),signal:ctrl.signal});
-    clearTimeout(t); return await res.json();
-  }catch(e){
-    clearTimeout(t); return {ok:false,reason:'Không kết nối được máy chủ. Kiểm tra API_URL/Worker.'};
-  }
-}
-
-function showTab(name){
-  for(const id of ['reg','login','exam','review']) gid('tab-'+id).style.display = (id===name)?'block':'none';
-}
-function showSettings(){
-  const cur = getApiUrl();
-  const url = prompt('Nhập API URL (Cloudflare Worker):', cur || 'https://xxx.workers.dev');
-  if(url){
-    setApiUrl(url); API_URL = getApiUrl(); alert('Đã lưu API URL. Tải lại trang để áp dụng.');
+async function api(action, body = {}) {
+  try {
+    const res = await fetch(API_DEFAULT, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({action, ...body})
+    });
+    return await res.json();
+  } catch(e) {
+    return {ok:false, reason:'Không kết nối được máy chủ'};
   }
 }
 
 async function onRegister(){
-  const fullnameRaw = v('r_fullname');
-  const fullname = normalizeFullName(fullnameRaw);
-  s('r_fullname', fullname);
-
+  const fullname = normalizeFullName(valAny('r_fullname','fullname','hoten'));
   const payload = {
     fullname,
-    birth: v('r_birth'),
-    gender: v('r_gender'),
-    ethnicity: v('r_ethnicity'),
-    school: v('r_school'),
-    grade: v('r_grade'),
-    classCode: v('r_class'),
-    cccd: v('r_cccd'),
-    email: v('r_email'),
-    note: v('r_note')
+    birth: valAny('r_birth'),
+    gender: valAny('r_gender'),
+    ethnicity: valAny('r_ethnicity'),
+    school: valAny('r_school'),
+    grade: valAny('r_grade'),
+    classCode: valAny('r_class'),
+    cccd: valAny('r_cccd'),
+    email: valAny('r_email'),
+    note: valAny('r_note')
   };
 
-  const btn=gid('btnRegister'); if(btn) btn.disabled=true; m('msgReg','Đang gửi đăng ký...',false,false);
-  const res = await api('register', { payload });
-  if(btn) btn.disabled=false;
-
-  if(res?.ok) m('msgReg', res.msg || 'Đăng ký thành công. Mật khẩu đã gửi email.', false, true);
-  else m('msgReg', res?.reason || 'Không rõ lỗi', true, false);
+  const btn = gid('btnRegister'); if(btn) btn.disabled = true;
+  msg('msgReg','Đang gửi đăng ký...');
+  const res = await api('register', {payload});
+  if(btn) btn.disabled = false;
+  if(res.ok) msg('msgReg','✅ Đăng ký thành công', false, true);
+  else msg('msgReg','❌ Lỗi: '+res.reason, true, false);
 }
 
-let token=null;
-async function onLogin(){
-  const cccd=v('l_cccd'), password=v('l_password');
-  const data = await api('login', { cccd, password });
-  if(data?.ok){ token=data.token; m('msgLogin','Đăng nhập thành công',false,true); }
-  else m('msgLogin', data?.reason||'Sai CCCD/mật khẩu', true,false);
-}
-
-let examId=null;
-async function getExam(){
-  const grade=v('e_grade'), subject=v('e_subject'), mode=v('e_mode');
-  const meta = await api('examMeta', { token, grade, subject, mode });
-  if(!meta?.ok) return m('msgExam', meta?.reason||'Chưa cấu hình đề', true,false);
-  examId = meta.exam?.examId;
-  const q = await api('getQuestions', { token, examId });
-  if(!q?.ok) return m('msgExam', q?.reason||'Lỗi lấy câu hỏi', true,false);
-  gid('reviewBox').textContent = JSON.stringify(q.questions, null, 2);
-  m('msgExam', 'Đã tải câu hỏi', false, true);
-}
-
-async function exportCSV(){
-  if(!token || !examId) return alert('Chưa có bài thi hiện tại');
-  const data = await api('adminExportCSV', {token, examId});
-  if(!data?.ok) return alert('Lỗi: '+data?.reason);
-  const bytes = atob(data.content); const buf = new Uint8Array(bytes.length);
-  for(let i=0;i<bytes.length;i++) buf[i]=bytes.charCodeAt(i);
-  const blob = new Blob([buf], {type:'text/csv'}); const url = URL.createObjectURL(blob);
-  const a=document.createElement('a'); a.href=url; a.download=data.filename || 'scores.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-}
+gid('btnRegister').onclick = onRegister;
 </script>
 </body>
 </html>
