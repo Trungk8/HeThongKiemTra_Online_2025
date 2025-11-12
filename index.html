@@ -213,6 +213,93 @@ function v(id){return gid(id).value.trim();}
 function s(id,val){gid(id).value=val; gid(id).textContent=val;}
 function m(id, text, isErr=false, isOk=false){ const el=gid(id); el.textContent=text; el.className = isErr?'err':(isOk?'ok':'muted'); }
 function gid(id){return document.getElementById(id);}
+  <script>
+// ====== CẦN SỬA DÒNG NÀY: dán URL Cloudflare Worker của thầy ======
+const API_URL = 'https://YOUR_WORKER_URL.workers.dev';
+// ===================================================================
+
+// --- helpers an toàn, tự dò nhiều khả năng id (vi/en/viết tắt) ---
+const gid = id => document.getElementById(id);
+const q = sel => document.querySelector(sel);
+function valAny(...ids) {
+  for (const id of ids) {
+    const el = gid(id);
+    if (el && typeof el.value === 'string') return el.value.trim();
+  }
+  return '';
+}
+function setAny(id, v) { const el = gid(id); if (el) el.value = v; }
+function msg(id, text, isErr=false, isOk=false){
+  const el = gid(id); if(!el) { if(isErr) alert(text); return; }
+  el.textContent = text;
+  el.className = isErr ? 'err' : (isOk ? 'ok' : 'muted');
+}
+
+// --- chuẩn hóa HỌ VÀ TÊN: bỏ khoảng trắng thừa & IN HOA toàn bộ ---
+function normalizeFullName(str){
+  return String(str||'').normalize('NFC').trim().replace(/\s+/g,' ').toUpperCase();
+}
+
+// --- gọi API có timeout 15s để tránh quay mãi ---
+async function api(action, body = {}) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 15000);
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({action, ...body}),
+      signal: ctrl.signal
+    });
+    clearTimeout(t);
+    return await res.json();
+  } catch(e) {
+    clearTimeout(t);
+    return {ok:false, reason:'Không kết nối được máy chủ. Kiểm tra API_URL/Worker.'};
+  }
+}
+
+// === ĐĂNG KÝ: tự in HOA họ tên trước khi gửi ===
+async function onRegister(){
+  // tự dò các id phổ biến mà thầy có thể đang dùng
+  const fullnameRaw = valAny('r_fullname','fullname','hoten','ho_ten','name');
+  const fullname    = normalizeFullName(fullnameRaw);
+  setAny('r_fullname', fullname); // cập nhật lại trên form (nếu có ô này)
+
+  const payload = {
+    fullname,
+    birth:     valAny('r_birth','birth','ngaysinh','dob','date'),
+    gender:    valAny('r_gender','gender','gioitinh'),
+    ethnicity: valAny('r_ethnicity','ethnicity','dantoc'),
+    school:    valAny('r_school','school','truong'),
+    grade:     valAny('r_grade','grade','khoi'),
+    classCode: valAny('r_class','classCode','malop','lop'),
+    cccd:      valAny('r_cccd','cccd','madinhdanh','so_cccd'),
+    email:     valAny('r_email','email','gmail'),
+    note:      valAny('r_note','note','ghichu')
+  };
+
+  const btn = gid('btnRegister'); if(btn) btn.disabled = true;
+  msg('msgReg','Đang gửi đăng ký...', false, false);
+
+  const res = await api('register', { payload });
+
+  if(btn) btn.disabled = false;
+  if(res && res.ok){
+    msg('msgReg', `✅ ${res.msg || 'Đăng ký thành công.'} – HỌ TÊN: ${fullname}`, false, true);
+  }else{
+    msg('msgReg', `❌ ${res?.reason || 'Lỗi không xác định'}`, true, false);
+  }
+}
+
+// === VÍ DỤ GÁN SỰ KIỆN CHO NÚT (nếu html chưa gắn onclick) ===
+(function autoBind(){
+  const b = gid('btnRegister');
+  if (b && !b.__bound) { b.addEventListener('click', onRegister); b.__bound = true; }
+})();
+
+</script>
+
 </script>
 </body>
 </html>
