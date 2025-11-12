@@ -1,87 +1,217 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hệ thống Kiểm tra Online 2025</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hệ thống Kiểm tra Online</title>
+<style>
+  :root{
+    --bg:#0d6efd; --txt:#111; --muted:#6b7280; --ok:#16a34a; --err:#dc2626; --card:#fff;
+    --bd:#e5e7eb;
+  }
+  *{box-sizing:border-box}
+  body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f6f8fb;color:var(--txt)}
+  header{background:var(--bg);color:#fff;padding:20px 16px}
+  header h1{margin:0;font-size:22px;font-weight:800}
+  .wrap{max-width:980px;margin:18px auto;padding:0 16px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:720px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--bd);border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
+  .card h2{margin:0 0 12px;font-size:18px}
+  .pad{padding:20px}
+  label{display:block;font-weight:600;margin:8px 0 6px}
+  input,select,textarea{
+    width:100%;padding:12px 14px;border:1px solid var(--bd);border-radius:12px;background:#fff;
+    font:inherit;outline:0;
+  }
+  input:focus,select:focus,textarea:focus{border-color:#9ac3ff;box-shadow:0 0 0 3px #cfe3ff}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .btn{
+    padding:11px 16px;border-radius:12px;border:1px solid transparent;background:var(--bg);color:#fff;
+    cursor:pointer;font-weight:700
+  }
+  .btn.sec{background:#fff;color:var(--bg);border-color:var(--bg)}
+  .btn.ghost{background:#fff;color:#111;border-color:var(--bd)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .muted{color:var(--muted);font-size:13px;margin-top:4px}
+  .pill{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;margin-top:8px}
+  .ok{background:#ecfdf5;color:var(--ok);border:1px solid #bbf7d0}
+  .err{background:#fef2f2;color:var(--err);border:1px solid #fecaca}
+  .center{display:flex;align-items:center;gap:6px}
+  footer{padding:18px 16px;color:var(--muted);text-align:center}
+</style>
 </head>
 <body>
-  <h1>Hệ thống Kiểm tra Online</h1>
-  <p>Nhập thông tin để đăng ký:</p>
-  <form id="regForm">
-    <label>Họ và tên:</label><input id="r_fullname"><br>
-    <label>Ngày sinh:</label><input id="r_birth"><br>
-    <label>Giới tính:</label><input id="r_gender"><br>
-    <label>Dân tộc:</label><input id="r_ethnicity"><br>
-    <label>Trường:</label><input id="r_school"><br>
-    <label>Khối:</label><input id="r_grade"><br>
-    <label>Mã lớp:</label><input id="r_class"><br>
-    <label>Số CCCD:</label><input id="r_cccd"><br>
-    <label>Email:</label><input id="r_email"><br>
-    <label>Ghi chú:</label><input id="r_note"><br>
-    <button type="button" id="btnRegister">Gửi đăng ký</button>
-    <p id="msgReg"></p>
-  </form>
+<header><h1>Hệ thống Kiểm tra Online</h1></header>
+
+<div class="wrap grid">
+  <section class="card pad">
+    <h2>Đăng ký tài khoản</h2>
+
+    <div class="row2">
+      <div>
+        <label>Họ và tên</label>
+        <input id="r_fullname" placeholder="Ví dụ: Nguyễn Văn A">
+        <div class="muted">Sẽ tự **IN HOA** trước khi gửi</div>
+      </div>
+      <div>
+        <label>Ngày sinh</label>
+        <input id="r_birth" placeholder="YYYY-MM-DD">
+      </div>
+    </div>
+
+    <div class="row2">
+      <div>
+        <label>Giới tính</label>
+        <select id="r_gender">
+          <option value="">-- Chọn --</option>
+          <option>Nam</option>
+          <option>Nữ</option>
+          <option>Khác</option>
+        </select>
+      </div>
+      <div>
+        <label>Dân tộc</label>
+        <input id="r_ethnicity" placeholder="Kinh, Hoa, ...">
+      </div>
+    </div>
+
+    <div class="row2">
+      <div>
+        <label>Trường</label>
+        <input id="r_school" placeholder="VD: THPT Nguyễn Đình Chiểu">
+      </div>
+      <div>
+        <label>Khối</label>
+        <select id="r_grade">
+          <option value="">-- Chọn --</option>
+          <option>10</option><option>11</option><option>12</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div>
+        <label>Mã lớp</label>
+        <input id="r_class" placeholder="VD: 12A1">
+      </div>
+      <div>
+        <label>Số CCCD / Mã định danh</label>
+        <input id="r_cccd" placeholder="12 số">
+      </div>
+    </div>
+
+    <div>
+      <label>Email</label>
+      <input id="r_email" placeholder="name@email.com">
+    </div>
+
+    <div>
+      <label>Ghi chú</label>
+      <textarea id="r_note" rows="2" placeholder="Tuỳ chọn"></textarea>
+    </div>
+
+    <div class="btns">
+      <button class="btn" id="btnRegister">Gửi đăng ký</button>
+      <button class="btn ghost" id="btnPing">Kiểm tra kết nối</button>
+    </div>
+    <div id="msgReg" class="pill" style="display:none"></div>
+  </section>
+
+  <aside class="card pad">
+    <h2>Trạng thái hệ thống</h2>
+    <div class="center">
+      <strong>API đang trỏ tới:</strong>
+      <span id="apiUrl" class="muted"></span>
+    </div>
+    <div class="muted" style="margin-top:8px">
+      Nếu cần thay API, mở file <code>index.html</code> và sửa hằng <code>API_DEFAULT</code>.
+    </div>
+
+    <div style="margin-top:18px">
+      <div id="statusBox" class="pill" style="display:none"></div>
+    </div>
+  </aside>
+</div>
+
+<footer>© THPT Nguyễn Đình Chiểu – Hệ thống kiểm tra Online</footer>
 
 <script>
-const API_DEFAULT = 'https://solitary-leaf-24bd.nvtpvd.workers.dev'; // Worker cố định
+  const API_DEFAULT = 'https://solitary-leaf-24bd.nvtpvd.workers.dev';
 
-const gid = id => document.getElementById(id);
-function valAny(...ids) {
-  for (const id of ids) {
-    const el = gid(id);
-    if (el && typeof el.value === 'string') return el.value.trim();
+  const gid = id => document.getElementById(id);
+  const show = (el, yes=true) => (el.style.display = yes ? '' : 'none');
+
+  function toast(el, text, type='ok'){
+    el.className = 'pill ' + (type==='ok'?'ok':'err');
+    el.textContent = text;
+    show(el,true);
   }
-  return '';
-}
-function msg(id, text, isErr=false, isOk=false){
-  const el = gid(id);
-  if (!el) return;
-  el.textContent = text;
-  el.style.color = isErr ? 'red' : (isOk ? 'green' : 'black');
-}
 
-function normalizeFullName(str){
-  return String(str||'').normalize('NFC').trim().replace(/\s+/g,' ').toUpperCase();
-}
-
-async function api(action, body = {}) {
-  try {
-    const res = await fetch(API_DEFAULT, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({action, ...body})
-    });
-    return await res.json();
-  } catch(e) {
-    return {ok:false, reason:'Không kết nối được máy chủ'};
+  function normalizeFullName(s){
+    return String(s||'').normalize('NFC').trim().replace(/\s+/g,' ').toUpperCase();
   }
-}
 
-async function onRegister(){
-  const fullname = normalizeFullName(valAny('r_fullname','fullname','hoten'));
-  const payload = {
-    fullname,
-    birth: valAny('r_birth'),
-    gender: valAny('r_gender'),
-    ethnicity: valAny('r_ethnicity'),
-    school: valAny('r_school'),
-    grade: valAny('r_grade'),
-    classCode: valAny('r_class'),
-    cccd: valAny('r_cccd'),
-    email: valAny('r_email'),
-    note: valAny('r_note')
-  };
+  async function api(action, body={}){
+    try{
+      const r = await fetch(API_DEFAULT, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({action, ...body})
+      });
+      return await r.json();
+    }catch(e){
+      return {ok:false, reason:'Không kết nối được máy chủ'};
+    }
+  }
 
-  const btn = gid('btnRegister'); if(btn) btn.disabled = true;
-  msg('msgReg','Đang gửi đăng ký...');
-  const res = await api('register', {payload});
-  if(btn) btn.disabled = false;
-  if(res.ok) msg('msgReg','✅ Đăng ký thành công', false, true);
-  else msg('msgReg','❌ Lỗi: '+res.reason, true, false);
-}
+  async function onRegister(){
+    const btn = gid('btnRegister'); btn.disabled = true;
+    const msg = gid('msgReg');
 
-gid('btnRegister').onclick = onRegister;
+    const payload = {
+      fullname: normalizeFullName(gid('r_fullname').value),
+      birth: gid('r_birth').value.trim(),
+      gender: gid('r_gender').value.trim(),
+      ethnicity: gid('r_ethnicity').value.trim(),
+      school: gid('r_school').value.trim(),
+      grade: gid('r_grade').value.trim(),
+      classCode: gid('r_class').value.trim(),
+      cccd: gid('r_cccd').value.trim(),
+      email: gid('r_email').value.trim(),
+      note: gid('r_note').value.trim()
+    };
+
+    toast(msg,'Đang gửi đăng ký...', 'ok');
+
+    const res = await api('register', {payload});
+    btn.disabled = false;
+
+    if(res.ok) toast(msg,'Đăng ký thành công ✔', 'ok');
+    else toast(msg,'Lỗi: '+(res.reason||'Không xác định'), 'err');
+  }
+
+  async function ping(){
+    const box = gid('statusBox');
+    show(box,false);
+    try{
+      const url = API_DEFAULT + '?action=pingSheet';
+      const r = await fetch(url);
+      const t = await r.text();
+      if(r.ok && /"ok"\s*:\s*true/.test(t)){
+        toast(box,'Kết nối OK (Worker ↔ Apps Script)', 'ok');
+      }else{
+        toast(box,'Worker hoạt động nhưng Apps Script trả về lỗi', 'err');
+      }
+    }catch(e){
+      toast(box,'Không truy cập được Worker', 'err');
+    }
+  }
+
+  gid('btnRegister').onclick = onRegister;
+  gid('btnPing').onclick = ping;
+  gid('apiUrl').textContent = API_DEFAULT;
 </script>
 </body>
 </html>
