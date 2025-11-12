@@ -31,115 +31,55 @@
     padding:11px 16px;border-radius:12px;border:1px solid transparent;background:var(--bg);color:#fff;
     cursor:pointer;font-weight:700
   }
-  .btn.sec{background:#fff;color:var(--bg);border-color:var(--bg)}
   .btn.ghost{background:#fff;color:#111;border-color:var(--bd)}
   .btn:disabled{opacity:.5;cursor:not-allowed}
   .muted{color:var(--muted);font-size:13px;margin-top:4px}
   .pill{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;margin-top:8px}
   .ok{background:#ecfdf5;color:var(--ok);border:1px solid #bbf7d0}
   .err{background:#fef2f2;color:var(--err);border:1px solid #fecaca}
-  .center{display:flex;align-items:center;gap:6px}
   footer{padding:18px 16px;color:var(--muted);text-align:center}
 </style>
 </head>
 <body>
 <header><h1>Hệ thống Kiểm tra Online</h1></header>
-
 <div class="wrap grid">
   <section class="card pad">
     <h2>Đăng ký tài khoản</h2>
-
-    <div class="row2">
-      <div>
-        <label>Họ và tên</label>
-        <input id="r_fullname" placeholder="Ví dụ: Nguyễn Văn A">
-        <div class="muted">Sẽ tự **IN HOA** trước khi gửi</div>
-      </div>
-      <div>
-        <label>Ngày sinh</label>
-        <input id="r_birth" placeholder="YYYY-MM-DD">
-      </div>
-    </div>
-
-    <div class="row2">
-      <div>
-        <label>Giới tính</label>
-        <select id="r_gender">
-          <option value="">-- Chọn --</option>
-          <option>Nam</option>
-          <option>Nữ</option>
-          <option>Khác</option>
-        </select>
-      </div>
-      <div>
-        <label>Dân tộc</label>
-        <input id="r_ethnicity" placeholder="Kinh, Hoa, ...">
-      </div>
-    </div>
-
-    <div class="row2">
-      <div>
-        <label>Trường</label>
-        <input id="r_school" placeholder="VD: THPT Nguyễn Đình Chiểu">
-      </div>
-      <div>
-        <label>Khối</label>
-        <select id="r_grade">
-          <option value="">-- Chọn --</option>
-          <option>10</option><option>11</option><option>12</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row2">
-      <div>
-        <label>Mã lớp</label>
-        <input id="r_class" placeholder="VD: 12A1">
-      </div>
-      <div>
-        <label>Số CCCD / Mã định danh</label>
-        <input id="r_cccd" placeholder="12 số">
-      </div>
-    </div>
-
-    <div>
-      <label>Email</label>
-      <input id="r_email" placeholder="name@email.com">
-    </div>
-
-    <div>
-      <label>Ghi chú</label>
-      <textarea id="r_note" rows="2" placeholder="Tuỳ chọn"></textarea>
-    </div>
-
+    <label>Họ và tên</label>
+    <input id="r_fullname" placeholder="Ví dụ: Nguyễn Văn A">
+    <label>Ngày sinh</label>
+    <input id="r_birth" placeholder="YYYY-MM-DD">
+    <label>Giới tính</label>
+    <input id="r_gender" placeholder="Nam/Nữ">
+    <label>Dân tộc</label>
+    <input id="r_ethnicity" placeholder="Kinh, Hoa, ...">
+    <label>Trường</label>
+    <input id="r_school" placeholder="VD: THPT Nguyễn Đình Chiểu">
+    <label>Khối</label>
+    <input id="r_grade" placeholder="10, 11, 12">
+    <label>Mã lớp</label>
+    <input id="r_class" placeholder="VD: 12A1">
+    <label>Số CCCD</label>
+    <input id="r_cccd" placeholder="12 số">
+    <label>Email</label>
+    <input id="r_email" placeholder="name@email.com">
+    <label>Ghi chú</label>
+    <textarea id="r_note" rows="2" placeholder="Tùy chọn"></textarea>
     <div class="btns">
       <button class="btn" id="btnRegister">Gửi đăng ký</button>
       <button class="btn ghost" id="btnPing">Kiểm tra kết nối</button>
     </div>
     <div id="msgReg" class="pill" style="display:none"></div>
   </section>
-
   <aside class="card pad">
     <h2>Trạng thái hệ thống</h2>
-    <div class="center">
-      <strong>API đang trỏ tới:</strong>
-      <span id="apiUrl" class="muted"></span>
-    </div>
-    <div class="muted" style="margin-top:8px">
-      Nếu cần thay API, mở file <code>index.html</code> và sửa hằng <code>API_DEFAULT</code>.
-    </div>
-
-    <div style="margin-top:18px">
-      <div id="statusBox" class="pill" style="display:none"></div>
-    </div>
+    <div id="statusBox" class="pill" style="display:none"></div>
   </aside>
 </div>
-
 <footer>© THPT Nguyễn Đình Chiểu – Hệ thống kiểm tra Online</footer>
 
 <script>
   const API_DEFAULT = 'https://solitary-leaf-24bd.nvtpvd.workers.dev';
-
   const gid = id => document.getElementById(id);
   const show = (el, yes=true) => (el.style.display = yes ? '' : 'none');
 
@@ -183,35 +123,30 @@
       note: gid('r_note').value.trim()
     };
 
-    toast(msg,'Đang gửi đăng ký...', 'ok');
-
-    const res = await api('register', {payload});
+    toast(msg,'Đang gửi đăng ký...','ok');
+    const res = await api('register',{payload});
     btn.disabled = false;
 
-    if(res.ok) toast(msg,'Đăng ký thành công ✔', 'ok');
-    else toast(msg,'Lỗi: '+(res.reason||'Không xác định'), 'err');
+    if(res.ok) toast(msg,'Đăng ký thành công ✔','ok');
+    else toast(msg,'Lỗi: '+(res.reason||'Không xác định'),'err');
   }
 
   async function ping(){
     const box = gid('statusBox');
     show(box,false);
     try{
-      const url = API_DEFAULT + '?action=pingSheet';
+      const url = API_DEFAULT+'?action=pingSheet';
       const r = await fetch(url);
       const t = await r.text();
-      if(r.ok && /"ok"\s*:\s*true/.test(t)){
-        toast(box,'Kết nối OK (Worker ↔ Apps Script)', 'ok');
-      }else{
-        toast(box,'Worker hoạt động nhưng Apps Script trả về lỗi', 'err');
-      }
+      if(r.ok && /"ok"\s*:\s*true/.test(t)) toast(box,'Kết nối OK (Worker ↔ Apps Script)','ok');
+      else toast(box,'Worker hoạt động nhưng Apps Script lỗi','err');
     }catch(e){
-      toast(box,'Không truy cập được Worker', 'err');
+      toast(box,'Không truy cập được Worker','err');
     }
   }
 
   gid('btnRegister').onclick = onRegister;
   gid('btnPing').onclick = ping;
-  gid('apiUrl').textContent = API_DEFAULT;
 </script>
 </body>
 </html>
