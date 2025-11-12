@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hệ thống kiểm tra Online</title>
+<style>
+  :root{--c:#0d6efd}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,Arial,sans-serif;background:#fafafa;margin:0}
+  .wrap{max-width:980px;margin:24px auto;padding:20px}
+  .card{background:#fff;border:1px solid #eee;border-radius:16px;box-shadow:0 6px 24px rgba(0,0,0,.06);padding:24px}
+  h1{margin:0 0 10px}
+  nav{display:flex;gap:10px;margin:6px 0 18px;flex-wrap:wrap}
+  nav button{padding:10px 14px;border:none;border-radius:10px;background:var(--c);color:#fff;cursor:pointer;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .row{display:flex;flex-direction:column;gap:6px}
+  input,select,textarea{padding:10px;border:1px solid #ddd;border-radius:10px;font-size:15px;background:#fff}
+  .btn{padding:10px 14px;border:none;border-radius:10px;background:var(--c);color:#fff;font-weight:700;cursor:pointer}
+  .muted{color:#666;font-size:13px}
+  .ok{color:#0a7a2f}.err{color:#b00020}
+  .hide{display:none}
+  .qcard{border:1px solid #eee;border-radius:12px;padding:14px;margin:10px 0;background:#fff}
+  .countdown{font-weight:800}
+  footer{margin-top:18px;color:#666;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Hệ thống kiểm tra Online</h1>
+    <nav>
+      <button onclick="showTab('registerTab')">Đăng ký</button>
+      <button onclick="showTab('loginTab')">Đăng nhập</button>
+      <button onclick="showTab('examTab')">Vào thi</button>
+      <button onclick="showTab('reviewTab')">Xem lại</button>
+    </nav>
+
+    <!-- ĐĂNG KÝ -->
+    <section id="registerTab">
+      <h3>Đăng ký tài khoản</h3>
+      <div class="grid">
+        <div class="row"><label>Họ và tên</label><input id="r_fullname" /></div>
+        <div class="row"><label>Ngày sinh</label><input id="r_birth" type="date" /></div>
+        <div class="row"><label>Giới tính</label>
+          <select id="r_gender"><option>Nam</option><option>Nữ</option><option>Khác</option></select>
+        </div>
+        <div class="row"><label>Dân tộc</label><input id="r_ethnicity"/></div>
+        <div class="row"><label>Trường</label><input id="r_school" /></div>
+        <div class="row"><label>Khối</label>
+          <select id="r_grade"><option value="10">10</option><option value="11">11</option><option value="12">12</option></select>
+        </div>
+        <div class="row"><label>Mã lớp</label><input id="r_class"/></div>
+        <div class="row"><label>Số CCCD/mã định danh (Tên đăng nhập)</label><input id="r_cccd"/></div>
+        <div class="row"><label>Email</label><input id="r_email" type="email"/></div>
+        <div class="row" style="grid-column:1/3"><label>Ghi chú</label><textarea id="r_note"></textarea></div>
+      </div>
+      <p id="r_msg" class="muted"></p>
+      <button class="btn" onclick="register()">Gửi đăng ký</button>
+    </section>
+
+    <!-- ĐĂNG NHẬP -->
+    <section id="loginTab" class="hide">
+      <h3>Đăng nhập</h3>
+      <div class="grid">
+        <div class="row"><label>CCCD</label><input id="l_cccd"/></div>
+        <div class="row"><label>Password</label><input id="l_password" type="password"/></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <label>Đổi mật khẩu</label>
+        <input id="cp_old" type="password" placeholder="Mật khẩu cũ"/>
+        <input id="cp_new" type="password" placeholder="Mật khẩu mới"/>
+        <button class="btn" onclick="changePass()">Đổi mật khẩu</button>
+        <p id="cp_msg" class="muted"></p>
+      </div>
+      <p id="l_msg" class="muted"></p>
+      <button class="btn" onclick="login()">Đăng nhập</button>
+    </section>
+
+    <!-- THI -->
+    <section id="examTab" class="hide">
+      <h3>Vào bài kiểm tra</h3>
+      <div class="grid">
+        <div class="row"><label>CCCD</label><input id="e_cccd"/></div>
+        <div class="row"><label>Email</label><input id="e_email" type="email"/></div>
+        <div class="row"><label>Khối</label>
+          <select id="e_grade" onchange="loadSubjects()">
+            <option value="">--Chọn--</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+          </select>
+        </div>
+        <div class="row"><label>Môn</label><select id="e_subject"></select></div>
+        <div class="row"><label>Hình thức</label>
+          <select id="e_mode"><option value="TX">TX</option><option value="DK">ĐK</option><option value="GK">Giữa kỳ</option><option value="CK">Cuối kỳ</option></select>
+        </div>
+        <div class="row"><label>Thời gian (phút)</label><input id="e_duration" readonly/></div>
+      </div>
+      <p class="muted">Nhấn “Lấy đề & thời gian”, rồi “Bắt đầu”. Hết giờ sẽ tự khóa & nộp.</p>
+      <p id="e_msg" class="muted"></p>
+      <button class="btn" onclick="prepareExam()">Lấy đề & thời gian</button>
+      <button class="btn hide" id="btnStart" onclick="startExam()">Bắt đầu làm bài</button>
+
+      <div id="examBox" class="hide">
+        <h3>Đang làm bài – Còn <span class="countdown" id="countdown">--:--</span></h3>
+        <div id="questions"></div>
+        <button class="btn" onclick="submitExam()">Nộp bài</button>
+      </div>
+    </section>
+
+    <!-- XEM LẠI -->
+    <section id="reviewTab" class="hide">
+      <h3>Kết quả & xem lại</h3>
+      <button class="btn" onclick="exportCSV()">Tải điểm CSV (bài hiện tại)</button>
+      <pre id="reviewBox" style="white-space:pre-wrap"></pre>
+    </section>
+
+    <footer>© THPT Nguyễn Đình Chiểu – Hệ thống kiểm tra Online</footer>
+  </div>
+</div>
+
+<script>
+// ====== CẦN SỬA DÒNG NÀY: dán URL Cloudflare Worker của thầy ======
+const API_URL = 'YOUR_WORKER_URL_HERE';
+// ===================================================================
+
+let token=null, examId=null, questions=[], timer=null, deadline=0, started=false, durationMin=0;
+
+function showTab(id){ ['registerTab','loginTab','examTab','reviewTab'].forEach(x=>gid(x).classList.add('hide')); gid(id).classList.remove('hide'); }
+async function api(action, body={}){ const res = await fetch(API_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({action, ...body})}); return await res.json(); }
+
+async function register(){
+  const payload = { fullname:v('r_fullname'), birth:v('r_birth'), gender:v('r_gender'), ethnicity:v('r_ethnicity'),
+    school:v('r_school'), grade:v('r_grade'), classCode:v('r_class'), cccd:v('r_cccd'), email:v('r_email'), note:v('r_note') };
+  m('r_msg','Đang gửi đăng ký...'); const data = await api('register',{payload});
+  m('r_msg', data.ok? data.msg : ('Lỗi: '+data.reason), !data.ok);
+}
+
+async function login(){
+  const cccd=v('l_cccd'), password=v('l_password'); m('l_msg','Đang đăng nhập...');
+  const data = await api('login',{cccd,password});
+  if(data.ok){ token=data.token; m('l_msg','Đăng nhập thành công', false, true); showTab('examTab'); }
+  else m('l_msg','Lỗi: '+data.reason, true);
+}
+
+async function changePass(){
+  if(!token) return m('cp_msg','Hãy đăng nhập trước', true);
+  const data = await api('changePassword', { token, cccd:v('l_cccd'), oldPass:v('cp_old'), newPass:v('cp_new') });
+  m('cp_msg', data.ok? 'Đã đổi mật khẩu' : ('Lỗi: '+data.reason), !data.ok);
+}
+
+async function loadSubjects(){
+  const grade = v('e_grade'); const data = await api('subjects',{grade});
+  const sel = gid('e_subject'); sel.innerHTML=''; (data.subjects||[]).forEach(s=>{ const o=document.createElement('option'); o.textContent=s; o.value=s; sel.appendChild(o); });
+}
+
+async function prepareExam(){
+  if(!token) return m('e_msg','Hãy đăng nhập trước', true);
+  const grade=v('e_grade'), subject=v('e_subject'), mode=v('e_mode');
+  const meta = await api('examMeta',{token,grade,subject,mode});
+  if(!meta.ok) return m('e_msg','Lỗi: '+meta.reason,true);
+  examId = meta.exam.examId; durationMin = meta.exam.durationMin; s('e_duration', durationMin);
+  m('e_msg','Đã sẵn sàng. Nhấn Bắt đầu để làm bài.', false, true); gid('btnStart').classList.remove('hide');
+}
+
+async function startExam(){
+  gid('btnStart').classList.add('hide');
+  const data = await api('getQuestions',{token,examId}); if(!data.ok) return m('e_msg','Lỗi nạp đề: '+data.reason, true);
+  questions = data.questions; renderQuestions(); gid('examBox').classList.remove('hide');
+  started = true; deadline = Date.now() + durationMin*60*1000; tick();
+}
+
+function renderQuestions(){
+  const box = gid('questions'); box.innerHTML='';
+  questions.forEach((q,i)=>{
+    const div=document.createElement('div'); div.className='qcard';
+    div.innerHTML = `<div><b>Câu ${i+1} (${q.Type})</b></div>
+                     <div>${q.Question}</div>
+                     <div style="margin-top:8px">
+                       ${['A','B','C','D'].filter(x=>q[x]).map(k=>
+                         `<label style="display:block"><input type="radio" name="q${q.QNo}" value="${k}"> ${k}. ${q[k]}</label>`).join('')}
+                     </div>`;
+    box.appendChild(div);
+  });
+}
+
+function tick(){
+  const left = Math.max(0, deadline - Date.now());
+  const mm = String(Math.floor(left/60000)).padStart(2,'0'); const ss = String(Math.floor((left%60000)/1000)).padStart(2,'0');
+  s('countdown', `${mm}:${ss}`); if(left<=0){ submitExam(true); return; } timer = setTimeout(tick, 250);
+}
+function collectAnswers(){ const ans=[]; questions.forEach(q=>{ const picked=document.querySelector(`input[name="q${q.QNo}"]:checked`); ans.push({QNo:q.QNo, choice:picked?picked.value:''});}); return ans; }
+
+async function submitExam(auto=false){
+  if(!started) return; started=false; if(timer) clearTimeout(timer);
+  const used = Math.round((durationMin*60*1000 - Math.max(0, deadline-Date.now()))/1000);
+  const payload = { token, examId, cccd:v('e_cccd'), email:v('e_email'), answers: collectAnswers(), durationUsedSec: used };
+  const data = await api('submit', payload); if(!data.ok){ alert('Nộp bài lỗi: '+data.reason); return; }
+  const r = data.result; const lines = r.detail.map(d=>`Câu ${d.QNo}: ${d.ok?'ĐÚNG':'SAI'} (chọn ${d.choose||'-'}, đúng ${d.correct})`).join('\n');
+  gid('reviewBox').textContent = `Bài: ${examId}\nĐiểm: ${r.score}/${r.total} (${r.percent}%)\n\n${lines}\n\n(*) Bài đã khóa.`;
+  showTab('reviewTab');
+}
+
+async function exportCSV(){
+  if(!token || !examId) return alert('Chưa có bài thi hiện tại');
+  const data = await api('adminExportCSV', {token, examId});
+  if(!data.ok) return alert('Lỗi: '+data.reason);
+  const bytes = atob(data.content); const buf = new Uint8Array(bytes.length);
+  for (let i=0;i<bytes.length;i++) buf[i] = bytes.charCodeAt(i);
+  const blob = new Blob([buf], {type:'text/csv'}); const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = data.filename || 'scores.csv'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+
+function v(id){return gid(id).value.trim();}
+function s(id,val){gid(id).value=val; gid(id).textContent=val;}
+function m(id, text, isErr=false, isOk=false){ const el=gid(id); el.textContent=text; el.className = isErr?'err':(isOk?'ok':'muted'); }
+function gid(id){return document.getElementById(id);}
+</script>
+</body>
+</html>
